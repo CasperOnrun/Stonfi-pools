@@ -1,0 +1,28 @@
+{
+    "name": "blackproduct/stonfi-pools",
+    "description": "STON.fi Pools Dashboard",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "yiisoft/yii2": "~2.0.45",
+        "yiisoft/yii2-bootstrap5": "~2.0.2",
+        "guzzlehttp/guzzle": "^7.5"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.1.0",
+        "yiisoft/yii2-gii": "~2.2.0"
+    },
+    "config": {
+        "process-timeout": 1800,
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
+}
+

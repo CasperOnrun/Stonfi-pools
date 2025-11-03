@@ -1,0 +1,10 @@
+.git
+.gitignore
+.env
+vendor/
+runtime/
+web/assets/
+.idea/
+.DS_Store
+*.log
+
