@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\web\View;
 
 /* @var $pool app\models\Pool */
 /* @var $snapshot app\models\PoolSnapshot */
@@ -116,10 +117,10 @@ $this->title = $pool->getPairName();
                 <div class="d-flex justify-content-between align-items-center">
                     <h5>История</h5>
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadChartData('1h')">1ч</button>
-                        <button type="button" class="btn btn-sm btn-outline-primary active" onclick="loadChartData('24h')">24ч</button>
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadChartData('7d')">7д</button>
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadChartData('30d')">30д</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadChartData('1h', this)">1ч</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary active" onclick="loadChartData('24h', this)">24ч</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadChartData('7d', this)">7д</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadChartData('30d', this)">30д</button>
                     </div>
                 </div>
             </div>
@@ -139,7 +140,7 @@ $historyUrl = Url::to(['history', 'address' => $pool->address]);
 $this->registerJs(<<<JS
 let tvlChart, apyChart;
 
-function loadChartData(period) {
+function loadChartData(period, button) {
     fetch('$historyUrl&period=' + period)
         .then(response => response.json())
         .then(data => {
@@ -148,7 +149,9 @@ function loadChartData(period) {
             document.querySelectorAll('.btn-group button').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            if (button) {
+                button.classList.add('active');
+            }
         });
 }
 
@@ -210,6 +213,6 @@ function updateCharts(data) {
 // Загрузка данных по умолчанию
 loadChartData('24h');
 JS
-);
+, View::POS_READY);
 ?>
 
