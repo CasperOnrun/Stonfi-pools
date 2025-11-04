@@ -1,5 +1,5 @@
 # Обновление данных пулов каждые 5 минут
-*/5 * * * * cd /var/www/html && php yii pools/sync >> /var/log/cron/pools-sync.log 2>&1
+*/5 * * * * cd /var/www/html && /usr/local/bin/php yii pools/sync >> /var/log/cron/pools-sync.log 2>&1
 
 # Пустая строка в конце обязательна для cron
 
