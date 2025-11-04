@@ -1,5 +1,4 @@
 # yii console commands
-/yii
 /yii.bat
 
 # phpstorm project files
@@ -35,9 +34,7 @@ phpunit.phar
 /.vagrant
 
 # ignore generated files
-/web/index.php
 /web/index-test.php
-/web/robots.txt
 
 # ignore runtime
 /runtime
