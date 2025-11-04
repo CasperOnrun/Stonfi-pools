@@ -141,7 +141,8 @@ $this->registerJs(<<<JS
 let tvlChart, apyChart;
 
 function loadChartData(period, button) {
-    fetch('$historyUrl&period=' + period)
+    const url = '$historyUrl' + (('$historyUrl').includes('?') ? '&' : '?') + 'period=' + period;
+    fetch(url)
         .then(response => response.json())
         .then(data => {
             updateCharts(data);
