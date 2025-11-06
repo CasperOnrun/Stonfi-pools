@@ -1,191 +1,167 @@
 # STON.fi Pools Dashboard
 
-Дэшборд для мониторинга пулов ликвидности на DEX STON.fi в блокчейне TON.
+A web dashboard for monitoring liquidity pools on the STON.fi DEX, built on the TON blockchain.
 
-## Возможности
+This application fetches data from the STON.fi API, stores historical snapshots, and provides a user interface to view real-time and historical data for liquidity pools, including TVL, trading volumes, and APY.
 
-- 📊 Мониторинг пулов ликвидности в реальном времени
-- 📈 История изменений TVL, объемов и APY
-- 🔄 Автоматическое обновление данных каждые 5 минут
-- 💾 Хранение исторических данных в MySQL
-- 🐳 Полная контейнеризация через Docker
+## ✨ Features
 
-## Технологии
+- 📊 Real-time monitoring of liquidity pools
+- 📈 Historical charts for TVL, volume, and APY
+- 🔄 Automatic data synchronization every 5 minutes via Cron
+- 💾 Historical data stored in a MySQL database
+- 🐳 Fully containerized with Docker for easy setup and deployment
 
-- **Backend**: PHP 8.2 + Yii2 Framework
+## 🛠️ Tech Stack
+
+- **Backend**: PHP 8.2 with the Yii2 Framework
 - **Database**: MySQL 8.0
-- **Web Server**: Nginx + PHP-FPM
+- **Web Server**: Nginx
+- **Containerization**: Docker & Docker Compose
 - **Scheduler**: Cron
-- **API**: STON.fi JSON-RPC API
 
-## Быстрый старт
+## 🚀 Quick Start
 
-### 1. Клонирование и установка
+Follow these steps to set up and run the project locally.
 
-```bash
-# Клонировать репозиторий
-git clone <repo-url>
-cd Stonfi-pools
+### 1. Prerequisites
 
-# Создать директорию для данных MySQL (если не существует)
-mkdir -p docker/mysql/data
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- Git
 
-# Скопировать .env файл
-cp .env.example .env
+### 2. Installation
 
-# Запустить контейнеры
-docker-compose up -d
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/CasperOnrun/Stonfi-pools.git
+    cd Stonfi-pools
+    ```
+
+2.  **Create a data directory for MySQL:**
+    ```bash
+    mkdir -p docker/mysql/data
+    ```
+
+3.  **Set up environment variables:**
+    There is no `.env` file in the project. The configuration is handled directly in the `config/` files (`db.php`, `params.php`). For a production setup, you may want to implement a library like `vlucas/phpdotenv`.
+
+4.  **Build and start the Docker containers:**
+    ```bash
+    docker-compose up -d --build
+    ```
+
+### 3. Application Setup
+
+1.  **Enter the PHP container:**
+    ```bash
+    docker-compose exec php bash
+    ```
+
+2.  **Inside the container, run the following commands:**
+    ```bash
+    # Install Composer dependencies
+    composer install
+
+    # Apply database migrations
+    ./yii migrate --interactive=0
+
+    # Perform the initial data synchronization
+    ./yii pools/sync
+    ```
+
+3.  **Exit the container:**
+    ```bash
+    exit
+    ```
+
+### 4. Access the Application
+
+You can now access the dashboard in your web browser at:
+**[http://localhost:8080](http://localhost:8080)**
+
+## ⚙️ Project Structure
+
+```
+├── commands/           # Console commands (e.g., for cron jobs)
+├── config/             # Application configuration
+├── controllers/        # Web request handlers
+├── docker/             # Docker configuration (Nginx, PHP, Cron)
+├── migrations/         # Database migrations
+├── models/             # ActiveRecord models
+├── services/           # Business logic (e.g., API services)
+├── views/              # View templates
+└── web/                # Public web root
 ```
 
-### 2. Установка зависимостей
+## 🕹️ Usage
 
-```bash
-# Войти в PHP контейнер
-docker-compose exec php bash
+### Web Interface
 
-# Установить composer зависимости
-composer install
+-   `GET /`: Main dashboard with a list of all liquidity pools.
+-   `GET /pool/{address}`: Detailed view of a specific pool.
+-   `GET /pool/{address}/history?period=24h`: JSON endpoint to fetch historical data for a pool.
 
-# Применить миграции
-php yii migrate --interactive=0
+### Console Commands
 
-# Первоначальная синхронизация данных
-php yii pools/sync
-```
+These commands can be run inside the `php` container (`docker-compose exec php bash`).
 
-### 3. Открыть в браузере
+-   **Sync pool data:**
+    ```bash
+    ./yii pools/sync
+    ```
 
-```
-http://localhost:8080
-```
+-   **Clean up old snapshots (older than 30 days by default):**
+    ```bash
+    ./yii pools/cleanup
+    ```
 
-## Структура проекта
+-   **Clean up with a custom retention period (e.g., 60 days):**
+    ```bash
+    ./yii pools/cleanup 60
+    ```
 
-```
-├── commands/           # Console команды
-│   └── PoolsController.php
-├── config/            # Конфигурация приложения
-│   ├── web.php
-│   ├── console.php
-│   ├── db.php
-│   └── params.php
-├── controllers/       # Web контроллеры
-│   └── PoolController.php
-├── docker/           # Docker конфигурация
-│   ├── nginx/
-│   ├── php/
-│   └── cron/
-├── migrations/       # Миграции БД
-├── models/          # AR модели
-│   ├── Pool.php
-│   └── PoolSnapshot.php
-├── services/        # Бизнес-логика
-│   └── StonfiApiService.php
-├── views/          # Шаблоны
-│   ├── layouts/
-│   └── pool/
-└── web/           # Публичная директория
-```
+## 🐳 Docker Environment
 
-## API Endpoints
+The `docker-compose.yml` file defines the following services:
 
-### Web интерфейс
-- `GET /` - Главная страница (список пулов)
-- `GET /pool/{address}` - Детальная информация о пуле
-- `GET /pool/{address}/history?period=24h` - История пула (JSON)
+-   `nginx`: The web server, accessible on port `8080`.
+-   `php`: The PHP-FPM service that executes the application code.
+-   `mysql`: The MySQL database, accessible on port `3307`. Data is persisted in `docker/mysql/data`.
+-   `cron`: A container that runs the `pools/sync` command every 5 minutes.
 
-### Console команды
-```bash
-# Синхронизация данных с API
-php yii pools/sync
+### Managing Containers
 
-# Очистка старых снимков (старше 30 дней)
-php yii pools/cleanup
+-   **Stop containers:**
+    ```bash
+    docker-compose down
+    ```
 
-# Очистка с кастомным периодом (дни)
-php yii pools/cleanup 60
-```
+-   **View logs:**
+    ```bash
+    # View all logs
+    docker-compose logs -f
 
-## Cron задачи
+    # View logs for a specific service
+    docker-compose logs -f php
+    ```
 
-Настроены в `docker/cron/crontab`:
+-   **Clean up (removes containers, networks, and volumes):**
+    ```bash
+    docker-compose down -v
+    ```
 
-```cron
-# Синхронизация каждые 5 минут
-*/5 * * * * cd /var/www/html && php yii pools/sync
-```
+## 🤝 Contributing
 
-## База данных
+Contributions are welcome! Please feel free to submit a pull request or open an issue if you find a bug or have a feature request.
 
-### Таблица `pools`
-Хранит информацию о пулах ликвидности.
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/your-feature-name`).
+3.  Commit your changes (`git commit -m 'Add some feature'`).
+4.  Push to the branch (`git push origin feature/your-feature-name`).
+5.  Open a pull request.
 
-### Таблица `pool_snapshots`
-Хранит снимки состояния пулов с временными метками.
+## 📄 License
 
-## Отслеживаемые метрики
-
-- **reserve0/reserve1** - Резервы токенов в пуле
-- **tvl** - Total Value Locked (USD)
-- **volume_24h_usd** - Объем торгов за 24 часа
-- **apy_1d/7d/30d** - Годовая доходность за разные периоды
-- **lp_fee/protocol_fee** - Комиссии
-
-## Docker контейнеры
-
-- **nginx** - Web сервер (порт 8080)
-- **php** - PHP-FPM для обработки запросов
-- **mysql** - База данных (порт 3307, данные в `docker/mysql/data/`)
-- **cron** - Автоматическая синхронизация
-
-### Монтирование томов
-
-- **Код приложения**: `./` → `/var/www/html` (все файлы проекта)
-- **База данных**: `./docker/mysql/data` → `/var/lib/mysql` (данные MySQL на диске)
-- **Nginx конфиг**: `./docker/nginx/default.conf` → `/etc/nginx/conf.d/default.conf`
-- **Cron задачи**: `./docker/cron/crontab` → `/etc/cron.d/stonfi-cron`
-
-## Управление
-
-### Остановка
-```bash
-docker-compose down
-```
-
-### Перезапуск
-```bash
-docker-compose restart
-```
-
-### Логи
-```bash
-# Все сервисы
-docker-compose logs -f
-
-# Конкретный сервис
-docker-compose logs -f php
-docker-compose logs -f cron
-```
-
-### Очистка
-```bash
-# Удалить контейнеры и volumes
-docker-compose down -v
-```
-
-## Разработка
-
-### Дополнительные модули (опционально)
-
-```bash
-# Debug панель
-# Уже включена в dev режиме: http://localhost:8080/debug
-
-# Gii (генератор кода)
-# Доступен по: http://localhost:8080/gii
-```
-
-## Лицензия
-
-MIT
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
