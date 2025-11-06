@@ -84,8 +84,7 @@ function addLiquidity(widgetId) {
     const data = getWidgetData(widgetId);
     if (!data) return;
     
-    const modeInput = document.querySelector('input[name="add-mode-' + widgetId + '"]:checked');
-    const mode = modeInput ? modeInput.value : 'dual';
+    const mode = 'usdt';
     
     const wallet = JSON.parse(localStorage.getItem('wallet_balance') || '{}');
     const storageKey = 'liquidity_' + data.poolAddress;
@@ -225,10 +224,12 @@ function removeLiquidity(widgetId) {
     const token0Amount = (liquidityData.token0 || 0) * ratio;
     const token1Amount = (liquidityData.token1 || 0) * ratio;
     
-    // Возвращаем токены в кошелек
+    // Конвертируем токены обратно в USDT
+    const usdtValue = (token0Amount * data.token0Price) + (token1Amount * data.token1Price);
+
+    // Возвращаем USDT в кошелек
     const wallet = JSON.parse(localStorage.getItem('wallet_balance') || '{}');
-    wallet[data.token0Symbol] = (wallet[data.token0Symbol] || 0) + token0Amount;
-    wallet[data.token1Symbol] = (wallet[data.token1Symbol] || 0) + token1Amount;
+    wallet['USDT'] = (wallet['USDT'] || 0) + usdtValue;
     
     // Обновляем данные ликвидности
     liquidityData.token0 = (liquidityData.token0 || 0) - token0Amount;

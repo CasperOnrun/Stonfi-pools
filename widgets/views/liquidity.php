@@ -60,6 +60,14 @@ $token1Price = $snapshot && $snapshot->token1_price ? $snapshot->token1_price : 
                     </div>
                 </div>
 
+                <div class="mt-2 mb-3">
+                    <small class="text-muted">You will provide approximately:</small>
+                    <div class="small">
+                        <span id="usdt-split-0-<?= md5($poolAddress) ?>">0</span> <?= $token0Symbol ?> +
+                        <span id="usdt-split-1-<?= md5($poolAddress) ?>">0</span> <?= $token1Symbol ?>
+                    </div>
+                </div>
+
                 <div class="d-grid">
                     <button class="btn btn-primary btn-add-liquidity" onclick="addLiquidity('<?= md5($poolAddress) ?>')">
                         Buy LP Tokens

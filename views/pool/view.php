@@ -41,10 +41,10 @@ $this->title = $pool->getPairName();
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 style="color: #e4e6eb; font-weight: 600; margin: 0;">📈 Trading Charts</h5>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadChartData('1h', this)">1h</button>
-                                <button type="button" class="btn btn-sm btn-outline-primary active" onclick="loadChartData('24h', this)">24h</button>
-                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadChartData('7d', this)">7d</button>
-                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadChartData('30d', this)">30d</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-period="1h">1h</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary active" data-period="24h">24h</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-period="7d">7d</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-period="30d">30d</button>
                             </div>
                         </div>
                     </div>
@@ -399,8 +399,14 @@ function updateCharts(data) {
     });
 }
 
+document.querySelectorAll('.btn-group[role="group"] button').forEach(button => {
+    button.addEventListener('click', function() {
+        loadChartData(this.dataset.period, this);
+    });
+});
+
 // Load default data
-loadChartData('24h');
+loadChartData('24h', document.querySelector('.btn-group[role="group"] button[data-period="24h"]'));
 JS
 , View::POS_READY);
 ?>
