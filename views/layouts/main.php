@@ -11,7 +11,7 @@ $this->beginPage() ?>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php $this->registerCsrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?> | Polo Trade</title>
+    <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/site.css" rel="stylesheet">
@@ -22,7 +22,7 @@ $this->beginPage() ?>
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => \yii\helpers\Html::img('/img/logo_polo.png', ['alt' => 'Polo Trade', 'style' => 'height:30px; margin-right: 10px;']) . 'Polo Trade',
+        'brandLabel' => \yii\helpers\Html::img('/img/logo_polo.png', ['alt' => 'Polo Trade', 'style' => 'height:30px; margin-right: 10px;']),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar navbar-expand-lg navbar-dark',
