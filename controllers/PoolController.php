@@ -16,19 +16,18 @@ class PoolController extends Controller
      */
     public function actionIndex()
     {
-        // Подзапрос для получения последних snapshot для каждого пула
-        $latestSnapshotSubQuery = PoolSnapshot::find()
-            ->select('MAX(id)')
-            ->where('pool_id = pools.id')
+        // Подзапрос для получения ID последнего snapshot для каждого пула
+        $subQuery = PoolSnapshot::find()
+            ->select(['pool_id', 'max_id' => 'MAX(id)'])
             ->groupBy('pool_id');
 
         $query = Pool::find()
-            ->with(['latestSnapshot'])
-            ->leftJoin(['ps' => 'pool_snapshots'], [
-                'and',
-                'ps.pool_id = pools.id',
-                ['ps.id' => $latestSnapshotSubQuery]
-            ])
+            ->alias('pools')
+            ->with('latestSnapshot')
+            // Присоединяем ID последнего снэпшота
+            ->leftJoin(['max_s' => $subQuery], 'max_s.pool_id = pools.id')
+            // Присоединяем данные последнего снэпшота для сортировки
+            ->leftJoin(['ps' => PoolSnapshot::tableName()], 'ps.id = max_s.max_id')
             ->where(['pools.is_deprecated' => false]);
 
         $dataProvider = new ActiveDataProvider([
@@ -47,31 +46,37 @@ class PoolController extends Controller
                         'asc' => ['ps.tvl' => SORT_ASC],
                         'desc' => ['ps.tvl' => SORT_DESC],
                         'label' => 'TVL',
+                        'default' => SORT_DESC,
                     ],
                     'volume_24h_usd' => [
                         'asc' => ['ps.volume_24h_usd' => SORT_ASC],
                         'desc' => ['ps.volume_24h_usd' => SORT_DESC],
                         'label' => 'Объем 24ч',
+                        'default' => SORT_DESC,
                     ],
                     'apy_1d' => [
                         'asc' => ['ps.apy_1d' => SORT_ASC],
                         'desc' => ['ps.apy_1d' => SORT_DESC],
                         'label' => 'APY 1д',
+                        'default' => SORT_DESC,
                     ],
                     'apy_7d' => [
                         'asc' => ['ps.apy_7d' => SORT_ASC],
                         'desc' => ['ps.apy_7d' => SORT_DESC],
                         'label' => 'APY 7д',
+                        'default' => SORT_DESC,
                     ],
                     'apy_30d' => [
                         'asc' => ['ps.apy_30d' => SORT_ASC],
                         'desc' => ['ps.apy_30d' => SORT_DESC],
                         'label' => 'APY 30д',
+                        'default' => SORT_DESC,
                     ],
                     'lp_fee' => [
                         'asc' => ['ps.lp_fee' => SORT_ASC],
                         'desc' => ['ps.lp_fee' => SORT_DESC],
                         'label' => 'Комиссия LP',
+                        'default' => SORT_DESC,
                     ],
                     'ps.popularity_index' => [
                         'asc' => ['ps.popularity_index' => SORT_ASC],
@@ -159,6 +164,8 @@ class PoolController extends Controller
             'apy_1d' => [],
             'apy_7d' => [],
             'apy_30d' => [],
+            'token0_price_usd' => [],
+            'token1_price_usd' => [],
         ];
 
         foreach ($snapshots as $snapshot) {
@@ -168,6 +175,16 @@ class PoolController extends Controller
             $data['apy_1d'][] = (float)$snapshot->apy_1d * 100;
             $data['apy_7d'][] = (float)$snapshot->apy_7d * 100;
             $data['apy_30d'][] = (float)$snapshot->apy_30d * 100;
+
+            // Рассчитываем и добавляем цены в USD
+            $reserve0 = $snapshot->reserve0 / pow(10, $pool->token0_decimals);
+            $reserve1 = $snapshot->reserve1 / pow(10, $pool->token1_decimals);
+            
+            $price0Usd = $reserve0 > 0 ? ($snapshot->tvl / 2) / $reserve0 : 0;
+            $price1Usd = $reserve1 > 0 ? ($snapshot->tvl / 2) / $reserve1 : 0;
+
+            $data['token0_price_usd'][] = $price0Usd;
+            $data['token1_price_usd'][] = $price1Usd;
         }
 
         return $data;

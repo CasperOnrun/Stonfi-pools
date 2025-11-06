@@ -13,13 +13,15 @@ use yii\behaviors\TimestampBehavior;
  * @property string $router_address
  * @property string $token0_address
  * @property string $token1_address
- * @property string $token0_symbol
- * @property string $token1_symbol
- * @property string $token0_name
- * @property string $token1_name
- * @property string $token0_image_url
- * @property string $token1_image_url
- * @property string $dex_version
+ * @property string|null $token0_symbol
+ * @property string|null $token1_symbol
+ * @property string|null $token0_name
+ * @property string|null $token1_name
+ * @property string|null $token0_image_url
+ * @property string|null $token1_image_url
+ * @property int $token0_decimals
+ * @property int $token1_decimals
+ * @property string|null $dex_version
  * @property bool $is_deprecated
  * @property int $created_at
  * @property int $updated_at
@@ -45,11 +47,11 @@ class Pool extends ActiveRecord
     {
         return [
             [['address', 'router_address', 'token0_address', 'token1_address'], 'required'],
-            [['address', 'router_address', 'token0_address', 'token1_address', 'token0_name', 'token1_name'], 'string', 'max' => 255],
-            [['token0_image_url', 'token1_image_url'], 'string', 'max' => 500],
-            [['token0_symbol', 'token1_symbol'], 'string', 'max' => 50],
-            [['dex_version'], 'string', 'max' => 10],
             [['is_deprecated'], 'boolean'],
+            [['address', 'router_address', 'token0_address', 'token1_address'], 'string', 'max' => 255],
+            [['token0_symbol', 'token1_symbol', 'token0_name', 'token1_name', 'dex_version'], 'string', 'max' => 50],
+            [['token0_image_url', 'token1_image_url'], 'string', 'max' => 2048],
+            [['token0_decimals', 'token1_decimals'], 'integer'],
             [['address'], 'unique'],
         ];
     }
@@ -63,19 +65,24 @@ class Pool extends ActiveRecord
     public function getLatestSnapshot()
     {
         return $this->hasOne(PoolSnapshot::class, ['pool_id' => 'id'])
-            ->orderBy(['pool_snapshots.created_at' => SORT_DESC]);
+            ->orderBy(['pool_snapshots.id' => SORT_DESC]);
     }
 
     public function attributeLabels()
     {
         return [
             'address' => 'Адрес пула',
-            'token0_symbol' => 'Токен 0',
-            'token1_symbol' => 'Токен 1',
-            'token0_name' => 'Название токена 0',
-            'token1_name' => 'Название токена 1',
+            'token0_symbol' => 'Символ токена 0',
+            'token1_symbol' => 'Символ токена 1',
+            'token0_name' => 'Имя токена 0',
+            'token1_name' => 'Имя токена 1',
+            'token0_image_url' => 'Иконка токена 0',
+            'token1_image_url' => 'Иконка токена 1',
+            'token0_decimals' => 'Децималы токена 0',
+            'token1_decimals' => 'Децималы токена 1',
             'dex_version' => 'Версия DEX',
-            'is_deprecated' => 'Устаревший',
+            'is_deprecated' => 'Устарел',
+            'created_at' => 'Дата создания',
         ];
     }
 

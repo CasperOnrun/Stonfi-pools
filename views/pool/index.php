@@ -11,55 +11,18 @@ use yii\widgets\Pjax;
 /** @var float $total_volume_24h */
 /** @var int $last_update */
 
-$this->title = 'Ston.fi Pools Dashboard';
+$this->title = 'Polo Trade';
 ?>
 <div class="pool-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <!-- Блок со статистикой -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Всего пулов</h5>
-                    <p class="card-text fs-4 fw-bold"><?= number_format($total_pools ?? 0, 0, '.', ' ') ?></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Общий TVL</h5>
-                    <p class="card-text fs-4 fw-bold text-success">$<?= number_format($total_tvl ?? 0, 0, '.', ' ') ?></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Объем (24ч)</h5>
-                    <p class="card-text fs-4 fw-bold">$<?= number_format($total_volume_24h ?? 0, 0, '.', ' ') ?></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Последнее обновление</h5>
-                    <p class="card-text fs-4 fw-bold"><?= Yii::$app->formatter->asRelativeTime($last_update ?? time()) ?></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Переключатель APY / Real Yield -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Список пулов</h4>
+    <div class="d-flex justify-content-end align-items-center mb-3">
         <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="yieldToggle">
             <label class="form-check-label" for="yieldToggle">
-                <span id="yieldLabel">Показать Real Yield</span>
+                <span id="yieldLabel" style="color: var(--text-primary);">Show Real Yield</span>
             </label>
         </div>
     </div>
@@ -68,9 +31,17 @@ $this->title = 'Ston.fi Pools Dashboard';
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-hover'],
+        'summary' => '', // Hide the summary text
+        'rowOptions' => function ($model) {
+            return [
+                'class' => 'pool-row',
+                'data-href' => \yii\helpers\Url::to(['view', 'address' => $model->address]),
+                'style' => 'cursor: pointer;'
+            ];
+        },
         'columns' => [
             [
-                'label' => 'Пул',
+                'label' => 'Pool',
                 'format' => 'raw',
                 'value' => function ($model) {
                     $icons = '<div class="token-icons d-inline-flex align-items-center me-2">';
@@ -90,7 +61,7 @@ $this->title = 'Ston.fi Pools Dashboard';
 
                     $pairName = Html::encode($model->getPairName());
                     $version = $model->dex_version ? ' <span class="badge bg-secondary">' . Html::encode($model->dex_version) . '</span>' : '';
-                    return '<div class="d-flex align-items-center">' . $icons . '<span>' . Html::a($pairName, ['view', 'address' => $model->address]) . $version . '</span></div>';
+                    return '<div class="d-flex align-items-center">' . $icons . '<span style="color: var(--text-primary);">' . $pairName . '</span>' . $version . '</div>';
                 },
             ],
             [
@@ -99,68 +70,76 @@ $this->title = 'Ston.fi Pools Dashboard';
                 'format' => 'raw',
                 'value' => function ($model) {
                     $snapshot = $model->latestSnapshot;
-                    return $snapshot ? '<span class="text-success fw-bold">' . $snapshot->formatTvl() . '</span>' : '-';
+                    if (!$snapshot) return '<span style="color: var(--text-muted);">-</span>';
+                    return '<span class="text-success fw-bold" style="color: var(--accent-green) !important;">' . $snapshot->formatTvl() . '</span>';
                 },
             ],
             [
                 'attribute' => 'volume_24h_usd',
-                'label' => 'Объем 24ч',
+                'label' => 'Volume 24h',
+                'format' => 'raw',
                 'value' => function ($model) {
                     $snapshot = $model->latestSnapshot;
-                    return $snapshot ? Yii::$app->formatter->asCurrency($snapshot->volume_24h_usd, 'USD') : '-';
+                    if (!$snapshot) return '<span style="color: var(--text-muted);">-</span>';
+                    $formatted = Yii::$app->formatter->asCurrency($snapshot->volume_24h_usd, 'USD');
+                    return '<span style="color: var(--text-primary);">' . $formatted . '</span>';
                 },
             ],
             [
                 'attribute' => 'apy_1d',
-                'label' => 'APY 1д',
+                'label' => 'APY 1d',
                 'format' => 'raw',
                 'headerOptions' => ['class' => 'yield-column', 'data-period' => '1d'],
                 'contentOptions' => ['class' => 'yield-column', 'data-period' => '1d'],
                 'value' => function ($model) {
                     $snapshot = $model->latestSnapshot;
-                    if (!$snapshot || $snapshot->apy_1d === null) return 'N/A';
+                    if (!$snapshot || $snapshot->apy_1d === null) return '<span style="color: var(--text-muted);">N/A</span>';
                     $apy = $snapshot->apy_1d * 100;
-                    return '<span data-apy="' . $apy . '" data-lp="' . $snapshot->lp_fee . '" data-protocol="' . $snapshot->protocol_fee . '">'
+                    return '<span data-apy="' . $apy . '" data-lp="' . $snapshot->lp_fee . '" data-protocol="' . $snapshot->protocol_fee . '" style="color: var(--text-primary);">'
                         . number_format($apy, 2) . '%'
                         . '</span>';
                 },
             ],
             [
                 'attribute' => 'apy_7d',
-                'label' => 'APY 7д',
+                'label' => 'APY 7d',
                 'format' => 'raw',
                 'headerOptions' => ['class' => 'yield-column', 'data-period' => '7d'],
                 'contentOptions' => ['class' => 'yield-column', 'data-period' => '7d'],
                 'value' => function ($model) {
                     $snapshot = $model->latestSnapshot;
-                    if (!$snapshot || $snapshot->apy_7d === null) return 'N/A';
+                    if (!$snapshot || $snapshot->apy_7d === null) return '<span style="color: var(--text-muted);">N/A</span>';
                     $apy = $snapshot->apy_7d * 100;
-                    return '<span data-apy="' . $apy . '" data-lp="' . $snapshot->lp_fee . '" data-protocol="' . $snapshot->protocol_fee . '">'
+                    return '<span data-apy="' . $apy . '" data-lp="' . $snapshot->lp_fee . '" data-protocol="' . $snapshot->protocol_fee . '" style="color: var(--text-primary);">'
                         . number_format($apy, 2) . '%'
                         . '</span>';
                 },
             ],
             [
                 'attribute' => 'apy_30d',
-                'label' => 'APY 30д',
+                'label' => 'APY 30d',
                 'format' => 'raw',
                 'headerOptions' => ['class' => 'yield-column', 'data-period' => '30d'],
                 'contentOptions' => ['class' => 'yield-column', 'data-period' => '30d'],
                 'value' => function ($model) {
                     $snapshot = $model->latestSnapshot;
-                    if (!$snapshot || $snapshot->apy_30d === null) return 'N/A';
+                    if (!$snapshot || $snapshot->apy_30d === null) return '<span style="color: var(--text-muted);">N/A</span>';
                     $apy = $snapshot->apy_30d * 100;
-                    return '<span data-apy="' . $apy . '" data-lp="' . $snapshot->lp_fee . '" data-protocol="' . $snapshot->protocol_fee . '">'
+                    return '<span data-apy="' . $apy . '" data-lp="' . $snapshot->lp_fee . '" data-protocol="' . $snapshot->protocol_fee . '" style="color: var(--text-primary);">'
                         . number_format($apy, 2) . '%'
                         . '</span>';
                 },
             ],
             [
                 'attribute' => 'lp_fee',
-                'label' => 'Комиссия LP',
+                'label' => 'LP Fee',
+                'format' => 'raw',
                 'value' => function ($model) {
                     $snapshot = $model->latestSnapshot;
-                    return $snapshot && $snapshot->lp_fee !== null ? ($snapshot->lp_fee / 100) . '%' : '-';
+                    if (!$snapshot || $snapshot->lp_fee === null) {
+                        return '<span style="color: var(--text-muted);">-</span>';
+                    }
+                    return '<span style="color: var(--text-primary);">' . ($snapshot->lp_fee / 100) . '%</span>';
                 },
             ],
         ],
@@ -183,7 +162,7 @@ $this->registerJs(<<<'JS'
 
     yieldToggle.addEventListener('change', function() {
         const isRealYield = this.checked;
-        document.getElementById('yieldLabel').textContent = isRealYield ? 'Показать APY' : 'Показать Real Yield';
+        document.getElementById('yieldLabel').textContent = isRealYield ? 'Show APY' : 'Show Real Yield';
 
         document.querySelectorAll('.yield-column').forEach(el => {
             const period = el.dataset.period;
@@ -227,6 +206,21 @@ $this->registerJs(<<<'JS'
                     value = apy;
                 }
                 span.textContent = value.toFixed(2) + '%';
+                span.style.color = 'var(--text-primary)';
+            }
+        });
+    });
+
+    // Делаем всю строку кликабельной
+    document.querySelectorAll('.pool-row').forEach(row => {
+        row.addEventListener('click', function(e) {
+            // Игнорируем клики по ссылкам и кнопкам внутри строки
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a') || e.target.closest('button')) {
+                return;
+            }
+            const href = this.dataset.href;
+            if (href) {
+                window.location.href = href;
             }
         });
     });

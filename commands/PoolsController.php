@@ -63,6 +63,18 @@ class PoolsController extends Controller
                     $pool->token1_name = $token1['meta']['display_name'] ?? null;
                     $pool->token0_image_url = $token0['meta']['image_url'] ?? null;
                     $pool->token1_image_url = $token1['meta']['image_url'] ?? null;
+
+                    $token0_decimals = $token0['meta']['decimals'] ?? 9;
+                    if (in_array($pool->token0_symbol, ['USDT', 'USD₮', 'jUSDT'])) {
+                        $token0_decimals = 6;
+                    }
+                    $pool->token0_decimals = $token0_decimals;
+
+                    $token1_decimals = $token1['meta']['decimals'] ?? 9;
+                    if (in_array($pool->token1_symbol, ['USDT', 'USD₮', 'jUSDT'])) {
+                        $token1_decimals = 6;
+                    }
+                    $pool->token1_decimals = $token1_decimals;
                     
                     // Определяем версию DEX из тегов
                     $pool->dex_version = $this->extractDexVersion($poolData['tags'] ?? []);
@@ -82,6 +94,21 @@ class PoolsController extends Controller
                     $pool->token0_image_url = $token0['meta']['image_url'] ?? null;
                     $pool->token1_image_url = $token1['meta']['image_url'] ?? null;
                     $pool->is_deprecated = $poolData['deprecated'] ?? false;
+
+                    if (!empty($token0['meta']['decimals'])) {
+                        $pool->token0_decimals = $token0['meta']['decimals'];
+                    }
+                    if (in_array($pool->token0_symbol, ['USDT', 'USD₮', 'jUSDT'])) {
+                        $pool->token0_decimals = 6;
+                    }
+
+                    if (!empty($token1['meta']['decimals'])) {
+                        $pool->token1_decimals = $token1['meta']['decimals'];
+                    }
+                    if (in_array($pool->token1_symbol, ['USDT', 'USD₮', 'jUSDT'])) {
+                        $pool->token1_decimals = 6;
+                    }
+
                     $pool->save(false);
                     $updatedPools++;
                 }
@@ -91,6 +118,7 @@ class PoolsController extends Controller
                 $snapshot->pool_id = $pool->id;
                 $snapshot->reserve0 = $poolData['reserve0'];
                 $snapshot->reserve1 = $poolData['reserve1'];
+                $snapshot->lp_total_supply = $poolData['lp_total_supply'] ?? 0;
                 $snapshot->token0_price = $poolData['token0_price'] ?? null;
                 $snapshot->token1_price = $poolData['token1_price'] ?? null;
                 $snapshot->tvl = $poolData['tvl'] ?? null;

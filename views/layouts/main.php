@@ -11,7 +11,7 @@ $this->beginPage() ?>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php $this->registerCsrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?> | STON.fi Pools Dashboard</title>
+    <title><?= Html::encode($this->title) ?> | Polo Trade</title>
     <?php $this->head() ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/site.css" rel="stylesheet">
@@ -22,16 +22,17 @@ $this->beginPage() ?>
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => '📊 STON.fi Pools',
+        'brandLabel' => \yii\helpers\Html::img('/img/logo_polo.png', ['alt' => 'Polo Trade', 'style' => 'height:30px; margin-right: 10px;']) . 'Polo Trade',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar navbar-expand-lg navbar-dark bg-primary',
+            'class' => 'navbar navbar-expand-lg navbar-dark',
+            'style' => 'background-color: #131829; border-bottom: 1px solid #2a2f45;',
         ],
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav ms-auto'],
         'items' => [
-            ['label' => 'Пулы', 'url' => ['/pool/index']],
+            ['label' => 'Pools', 'url' => ['/pool/index']],
         ],
     ]);
     NavBar::end();
@@ -42,15 +43,12 @@ $this->beginPage() ?>
     </div>
 </div>
 
-<footer class="footer mt-auto py-3 bg-light">
-    <div class="container">
-        <span class="text-muted">STON.fi Pools Dashboard © <?= date('Y') ?></span>
-    </div>
-</footer>
-
 <?php $this->endBody() ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/date-fns"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script src="<?= \yii\helpers\Url::to('@web/js/liquidity.js') ?>"></script>
 </body>
 </html>
 <?php $this->endPage() ?>

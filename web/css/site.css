@@ -1,6 +1,25 @@
+:root {
+    --bg-primary: #0a0e27;
+    --bg-secondary: #131829;
+    --bg-tertiary: #1a1f35;
+    --bg-card: #1e2339;
+    --border-color: #2a2f45;
+    --text-primary: #e4e6eb;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    --accent-green: #00d4aa;
+    --accent-red: #f23645;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-yellow: #fbbf24;
+    --accent-orange: #f97316;
+}
+
 html,
 body {
     height: 100%;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 .wrap {
@@ -8,46 +27,52 @@ body {
     height: auto;
     margin: 0 auto -60px;
     padding: 0 0 60px;
+    background-color: var(--bg-primary);
 }
 
 .wrap > .container {
     padding: 70px 15px 20px;
+    padding-bottom: 60px;
 }
 
 .footer {
     height: 60px;
-    background-color: #f5f5f5;
-    border-top: 1px solid #ddd;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
     padding-top: 20px;
+    color: var(--text-secondary);
 }
 
 .pool-card {
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
 }
 
 .pool-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 24px rgba(0, 212, 170, 0.15);
+    border-color: var(--accent-green);
 }
 
 .metric-value {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #2c3e50;
+    color: var(--text-primary);
 }
 
 .metric-label {
     font-size: 0.875rem;
-    color: #7f8c8d;
+    color: var(--text-secondary);
     text-transform: uppercase;
 }
 
 .positive {
-    color: #27ae60;
+    color: var(--accent-green);
 }
 
 .negative {
-    color: #e74c3c;
+    color: var(--accent-red);
 }
 
 .badge-liquidity {
@@ -75,9 +100,10 @@ body {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 2px solid var(--bg-card);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     object-fit: cover;
+    background-color: var(--bg-tertiary);
 }
 
 .token-icon:first-child {
@@ -94,7 +120,8 @@ body {
 .token-icon-large {
     width: 48px;
     height: 48px;
-    border: 3px solid white;
+    border: 3px solid var(--bg-card);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .token-icon-large:first-child {
@@ -122,5 +149,419 @@ body {
 
 .yield-value {
     transition: color 0.3s ease;
+}
+
+.word-break {
+    word-break: break-all;
+}
+
+/* Темная тема для карточек и таблиц */
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.card-header {
+    background-color: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.card-body {
+    color: var(--text-primary);
+}
+
+.table {
+    color: var(--text-primary);
+    background-color: transparent !important;
+}
+
+.table th {
+    border-color: var(--border-color);
+    color: var(--text-secondary) !important;
+    font-weight: 600;
+    background-color: transparent !important;
+}
+
+.table thead th {
+    color: var(--text-secondary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+.table thead th a {
+    color: var(--text-secondary) !important;
+    text-decoration: none;
+}
+
+.table thead th a:hover {
+    color: var(--accent-green) !important;
+    text-decoration: none;
+}
+
+.table thead th a:visited {
+    color: var(--text-secondary) !important;
+}
+
+.table thead th a:focus {
+    color: var(--text-secondary) !important;
+}
+
+/* Более специфичные селекторы для переопределения Bootstrap/Yii2 */
+table.table thead th,
+table.table thead th a,
+table.table thead th a:link,
+table.table thead th a:visited,
+table.table thead th a:active {
+    color: var(--text-secondary) !important;
+}
+
+table.table thead th a:hover {
+    color: var(--accent-green) !important;
+}
+
+.table td {
+    border-color: var(--border-color);
+    background-color: transparent !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.table tbody tr {
+    background-color: transparent !important;
+}
+
+.btn-secondary {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-secondary);
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.btn-primary {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+    color: var(--bg-primary);
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #00b894;
+    border-color: #00b894;
+}
+
+/* Кнопка добавления ликвидности */
+.btn-add-liquidity {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    height: auto !important;
+    min-height: 48px !important;
+}
+
+.btn-add-liquidity:hover {
+    background-color: #1a1a1a !important;
+    border-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+.btn-danger {
+    background-color: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+.btn-danger:hover {
+    background-color: #d63031;
+    border-color: #d63031;
+}
+
+.btn-outline-primary {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary.active {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+    color: var(--bg-primary);
+}
+
+/* Стили для выбранных radio кнопок в режимах добавления ликвидности */
+.btn-check:checked + .btn-outline-primary,
+.btn-check:active + .btn-outline-primary {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+    color: var(--bg-primary);
+}
+
+.btn-outline-secondary {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.form-control,
+.form-select {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--bg-tertiary);
+    border-color: var(--accent-green);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.25rem rgba(0, 212, 170, 0.25);
+}
+
+.form-label {
+    color: var(--text-primary);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-success {
+    color: var(--accent-green) !important;
+}
+
+.text-info {
+    color: var(--accent-blue) !important;
+}
+
+.alert-warning {
+    background-color: rgba(251, 191, 36, 0.1);
+    border-color: var(--accent-yellow);
+    color: var(--accent-yellow);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+/* Стили для виджета ликвидности */
+.liquidity-widget {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+}
+
+.liquidity-widget .nav-tabs {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.liquidity-widget .nav-link {
+    color: var(--text-secondary);
+    border: none;
+    border-bottom: 2px solid transparent;
+}
+
+.liquidity-widget .nav-link:hover {
+    border-color: transparent;
+    border-bottom-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.liquidity-widget .nav-link.active {
+    color: var(--accent-green);
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: var(--accent-green);
+}
+
+.liquidity-widget .add-mode-content {
+    margin-top: 1rem;
+}
+
+.liquidity-widget .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.liquidity-widget .input-group .btn {
+    min-width: 60px;
+}
+
+.liquidity-widget small.text-muted {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* Badge styles */
+.badge {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    padding: 0.35em 0.65em;
+    font-weight: 500;
+}
+
+.badge.bg-secondary {
+    background-color: var(--bg-tertiary) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Navbar styles */
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--accent-green);
+}
+
+.navbar-dark .navbar-brand {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.navbar-dark .navbar-brand:hover {
+    color: var(--accent-green);
+}
+
+/* Additional trading theme styles */
+.pool-view {
+    color: var(--text-primary);
+}
+
+.pool-view h1 {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.pool-view .card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s, transform 0.2s;
+}
+
+.pool-view .card:hover {
+    box-shadow: 0 8px 24px rgba(0, 212, 170, 0.15);
+}
+
+/* Form switch dark theme */
+.form-check-input {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+.form-check-input:checked {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+.form-check-label {
+    color: var(--text-primary);
+}
+
+/* Кликабельные строки таблицы */
+.pool-row {
+    transition: background-color 0.2s;
+}
+
+.pool-row:hover {
+    background-color: var(--bg-tertiary) !important;
+}
+
+.pool-row td {
+    color: var(--text-primary);
+}
+
+.pool-row a {
+    color: var(--text-primary) !important;
+    text-decoration: none;
+}
+
+.pool-row a:hover {
+    color: var(--accent-green) !important;
+    text-decoration: none;
+}
+
+/* Pagination dark theme for Yii2 LinkPager */
+.pagination > li > a,
+.pagination > li > span {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: var(--text-secondary);
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.pagination > li:first-child > a,
+.pagination > li:first-child > span {
+    margin-left: 0;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.pagination > li:last-child > a,
+.pagination > li:last-child > span {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.pagination > li > a:hover {
+    z-index: 2;
+    color: var(--accent-green);
+    background-color: var(--bg-secondary);
+    border-color: var(--accent-green);
+}
+
+.pagination > li.active > a,
+.pagination > li.active > a:hover {
+    z-index: 3;
+    color: var(--bg-primary);
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+.pagination > li.disabled > span {
+    color: var(--text-muted);
+    pointer-events: none;
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+
+/* Scrollbar styling for dark theme */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-green);
 }
 
