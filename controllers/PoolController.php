@@ -36,7 +36,7 @@ class PoolController extends Controller
                 'pageSize' => 25,
             ],
             'sort' => [
-                'defaultOrder' => ['ps.popularity_index' => SORT_DESC],
+                'defaultOrder' => ['apy_1d' => SORT_DESC],
                 'attributes' => [
                     'id' => [
                         'asc' => ['pools.id' => SORT_ASC],
