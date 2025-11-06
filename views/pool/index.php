@@ -11,7 +11,7 @@ use yii\widgets\Pjax;
 /** @var float $total_volume_24h */
 /** @var int $last_update */
 
-$this->title = 'Liquid Tokens Assets';
+$this->title = 'Liquidity Provider Tokens';
 ?>
 <div class="pool-index">
 
